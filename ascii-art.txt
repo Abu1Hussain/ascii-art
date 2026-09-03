@@ -1,0 +1,42 @@
+---- instructions ----
+"\n"
+"Hello\n"
+"hello"
+"HeLlO"
+"Hello There"
+"1Hello 2There"
+"{Hello There}"
+"Hello\nThere"
+"Hello\n\nThere"
+
+
+
+---- audit ----
+"hello"
+"HELLO"
+"HeLlo HuMaN"
+"1Hello 2There"
+"Hello\nThere"
+"Hello\n\nThere"
+"{Hello & There #}"
+'hello There 1 to 2!'
+"MaD3IrA&LiSboN"
+"1a\"#FdwHywR&/()="
+"{|}~"
+"[\]^_ 'a"
+"RGB"
+":;<=>?@"
+'\!" #$%&'"'"'()*+,-./'
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+"abcdefghijklmnopqrstuvwxyz"
+
+
+---- Ai ----
+"1a\"#FdwHywR&/()="
+'\!" #$%&'"'"'()*+,-./'
+
+
+
+
+
+
