@@ -7,15 +7,20 @@ import (
 )
 
 func main() {
+	if len(os.Args) == 0 {
+		return
+	}
 
-	// case: hello OR Hi , ...
+	if len(os.Args) < 2 {
+		return
+	}
+	// case: hello OR Hi, ...
 	// the user gives exactly one argument in the terminal
 	if len(os.Args) == 2 {
 
-		// send the users input to the AsciiArt function
+		// send the user's input to the AsciiArt function
 		art, err := AsciiArt(os.Args[1])
-
-		// if there is an error stop the program
+		// if there is an error, stop the program
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -25,9 +30,9 @@ func main() {
 		fmt.Print(art)
 
 		// also write the generated ASCII art to output.txt
-		err = os.WriteFile("output.txt", []byte(art), 0644)
+		err = os.WriteFile("output.txt", []byte(art), 0o644)
 
-		// if the output file cannot be written -> stop the program
+		// if the output file cannot be written, stop the program
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -36,7 +41,7 @@ func main() {
 		return
 	}
 
-	// case 2 the user has written input/output file
+	// case 2: the user has written input/output file
 	if len(os.Args) == 3 {
 
 		// input file name
@@ -45,10 +50,9 @@ func main() {
 		// output file name
 		outputFile := os.Args[2]
 
-		// Read all the data from the input file
+		// read all the data from the input file
 		data, err := os.ReadFile(inputFile)
-
-		// if the input file cannot be read -> stop the program
+		// if the input file cannot be read, stop the program
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -57,17 +61,16 @@ func main() {
 		// convert the data from []byte to string
 		// and send it to the ASCII-art function
 		art, err := AsciiArt(string(data))
-
-		// if error when converting
+		// if there is an error when converting
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
 		// write the changes into the output file
-		err = os.WriteFile(outputFile, []byte(art), 0644)
+		err = os.WriteFile(outputFile, []byte(art), 0o644)
 
-		// if the output file cannot be written -> stop the program
+		// if the output file cannot be written, stop the program
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -84,34 +87,36 @@ func main() {
 }
 
 func AsciiArt(input string) (string, error) {
-
-	// this to replace the input in: "Hello\nWorld" =>
-	// "Hello
+	// replace the literal \n with an actual newline
+	// "Hello\nWorld" => "Hello
 	// World"
 	input = strings.ReplaceAll(input, `\n`, "\n")
 
-	// to handle the quote case: '\!" #$%&'"'"'()*+,-./'
-	// it will check for the start and ending
-	if len(input) >= 2 && ((strings.HasPrefix(input, "'") && strings.HasSuffix(input, "'")) ||
-		(strings.HasPrefix(input, `"`) && strings.HasSuffix(input, `"`))) {
+	// handle the quote case:
+	// '\!" #$%&'"'"'()*+,-./'
+	// check for the starting and ending quote
+	if len(input) >= 2 &&
+		((strings.HasPrefix(input, "'") && strings.HasSuffix(input, "'")) ||
+			(strings.HasPrefix(input, `"`) && strings.HasSuffix(input, `"`))) {
 		input = input[1 : len(input)-1]
 	}
 
-	// will handle: '\!" #$%&'"'"'()*+,-./' , this: '"'"'
+	// handle:
+	// '\!" #$%&'"'"'()*+,-./'
+	// replacing '"'"' with '
 	input = strings.ReplaceAll(input, `'"'"'`, "'")
 
-	// to replace the following: \" with only "
+	// replace \" with "
 	input = strings.ReplaceAll(input, `\"`, `"`)
 
-	// read from standard.txt file
+	// read from standard.txt
 	fontBytes, err := os.ReadFile("standard.txt")
-
-	// if standard.txt cannot be opened or read -> return error
+	// if standard.txt cannot be opened or read, return error
 	if err != nil {
 		return "", err
 	}
 
-	// handle a new line
+	// handle Windows newlines
 	fontContent := strings.ReplaceAll(string(fontBytes), "\r\n", "\n")
 
 	// split each line in standard.txt
@@ -126,13 +131,10 @@ func AsciiArt(input string) (string, error) {
 	// process each line
 	for _, line := range lines {
 
-		// handle each empty line
+		// handle empty lines
 		if line == "" {
-
-			// add a newline
+			// preserve the newline
 			out.WriteByte('\n')
-
-			// skip the ASCII-art function for this line
 			continue
 		}
 
