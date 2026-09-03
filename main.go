@@ -7,20 +7,20 @@ import (
 )
 
 func main() {
+	// case: hello OR Hi , ...
+	// the user gives exactly one argument in the terminal
 	if len(os.Args) == 0 {
 		return
 	}
-
 	if len(os.Args) < 2 {
 		return
 	}
-	// case: hello OR Hi, ...
-	// the user gives exactly one argument in the terminal
+
 	if len(os.Args) == 2 {
 
-		// send the user's input to the AsciiArt function
+		// send the users input to the AsciiArt function
 		art, err := AsciiArt(os.Args[1])
-		// if there is an error, stop the program
+		// if there is an error stop the program
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -32,7 +32,7 @@ func main() {
 		// also write the generated ASCII art to output.txt
 		err = os.WriteFile("output.txt", []byte(art), 0o644)
 
-		// if the output file cannot be written, stop the program
+		// if the output file cannot be written -> stop the program
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -41,7 +41,7 @@ func main() {
 		return
 	}
 
-	// case 2: the user has written input/output file
+	// case 2 the user has written input/output file
 	if len(os.Args) == 3 {
 
 		// input file name
@@ -50,9 +50,9 @@ func main() {
 		// output file name
 		outputFile := os.Args[2]
 
-		// read all the data from the input file
+		// Read all the data from the input file
 		data, err := os.ReadFile(inputFile)
-		// if the input file cannot be read, stop the program
+		// if the input file cannot be read -> stop the program
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -61,7 +61,7 @@ func main() {
 		// convert the data from []byte to string
 		// and send it to the ASCII-art function
 		art, err := AsciiArt(string(data))
-		// if there is an error when converting
+		// if error when converting
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -70,7 +70,7 @@ func main() {
 		// write the changes into the output file
 		err = os.WriteFile(outputFile, []byte(art), 0o644)
 
-		// if the output file cannot be written, stop the program
+		// if the output file cannot be written -> stop the program
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -87,36 +87,32 @@ func main() {
 }
 
 func AsciiArt(input string) (string, error) {
-	// replace the literal \n with an actual newline
-	// "Hello\nWorld" => "Hello
+	// this to replace the input in: "Hello\nWorld" =>
+	// "Hello
 	// World"
 	input = strings.ReplaceAll(input, `\n`, "\n")
 
-	// handle the quote case:
-	// '\!" #$%&'"'"'()*+,-./'
-	// check for the starting and ending quote
-	if len(input) >= 2 &&
-		((strings.HasPrefix(input, "'") && strings.HasSuffix(input, "'")) ||
-			(strings.HasPrefix(input, `"`) && strings.HasSuffix(input, `"`))) {
+	// to handle the quote case: '\!" #$%&'"'"'()*+,-./'
+	// it will check for the start and ending
+	if len(input) >= 2 && ((strings.HasPrefix(input, "'") && strings.HasSuffix(input, "'")) ||
+		(strings.HasPrefix(input, `"`) && strings.HasSuffix(input, `"`))) {
 		input = input[1 : len(input)-1]
 	}
 
-	// handle:
-	// '\!" #$%&'"'"'()*+,-./'
-	// replacing '"'"' with '
+	// will handle: '\!" #$%&'"'"'()*+,-./' , this: '"'"'
 	input = strings.ReplaceAll(input, `'"'"'`, "'")
 
-	// replace \" with "
+	// to replace the following: \" with only "
 	input = strings.ReplaceAll(input, `\"`, `"`)
 
-	// read from standard.txt
+	// read from standard.txt file
 	fontBytes, err := os.ReadFile("standard.txt")
-	// if standard.txt cannot be opened or read, return error
+	// if standard.txt cannot be opened or read -> return error
 	if err != nil {
 		return "", err
 	}
 
-	// handle Windows newlines
+	// handle a new line
 	fontContent := strings.ReplaceAll(string(fontBytes), "\r\n", "\n")
 
 	// split each line in standard.txt
@@ -129,12 +125,20 @@ func AsciiArt(input string) (string, error) {
 	lines := strings.Split(input, "\n")
 
 	// process each line
-	for _, line := range lines {
+	for i, line := range lines {
 
-		// handle empty lines
+		// handle each empty line
 		if line == "" {
-			// preserve the newline
+
+			// skip the last empty string created by strings.Split
+			if i == len(lines)-1 {
+				continue
+			}
+
+			// add a newline
 			out.WriteByte('\n')
+
+			// skip the ASCII-art function for this line
 			continue
 		}
 
